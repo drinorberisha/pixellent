@@ -42,23 +42,24 @@ img{max-width:100%;display:block}
 .rail span.lit{background:var(--acid);opacity:1}
 
 /* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:linear-gradient(var(--ink) 60%, rgba(10,10,14,0))}
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:linear-gradient(var(--ink) 60%, rgba(10,10,14,0))}
 .nav-logo{display:flex;align-items:center;color:var(--paper)}
 .nav-logo:hover{color:var(--paper)}
-/* the mark stands in for the "x" in pi_x_ellent — sized to the wordmark */
-.px-mark{display:inline-grid;grid-template-columns:repeat(3,5.3px);grid-template-rows:repeat(3,5.3px);gap:1.5px;margin:0 3.5px}
+/* the mark stands in for the "x" in pi_x_ellent — cell/gap are whole pixels so
+   the squares stay hard-edged; --c/--g keep it in step with the wordmark size */
+.px-mark{--c:8px;--g:2px;display:inline-grid;grid-template-columns:repeat(3,var(--c));grid-template-rows:repeat(3,var(--c));gap:var(--g);margin:0 4px}
 .px-mark span{display:block;background:var(--cell-dim)}
 .px-mark span.on{background:var(--acid)}
 .px-mark span.ember{background:var(--acid);opacity:.38}
-.nav-word{display:flex;align-items:center;font-weight:700;font-size:20px;letter-spacing:-.02em}
-.nav-links{display:flex;gap:28px;align-items:center;font-family:var(--mono);font-size:13px}
+.nav-word{display:flex;align-items:center;font-weight:700;font-size:28px;letter-spacing:-.02em}
+.nav-links{display:flex;gap:30px;align-items:center;font-family:var(--mono);font-size:14px}
 .nav-links a{color:var(--fog)}
 .nav-links a:hover{color:var(--paper)}
-.nav-cta{color:var(--ink) !important;background:var(--acid);padding:9px 18px;font-weight:600}
+.nav-cta{color:var(--ink) !important;background:var(--acid);padding:12px 22px;font-weight:600}
 .nav-cta:hover{background:var(--paper);color:var(--ink) !important}
 
 /* HERO */
-.hero{position:relative;height:100svh;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;padding:76px 40px 40px;overflow:hidden}
+.hero{position:relative;height:100svh;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;padding:86px 40px 40px;overflow:hidden}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero-inner{position:relative;pointer-events:none;display:flex;flex-direction:column;gap:20px}
 .kicker{font-family:var(--mono);font-size:13px;color:var(--acid);letter-spacing:.08em}
@@ -176,9 +177,12 @@ img{max-width:100%;display:block}
 }
 @media (max-width:720px){
   .rail{display:none}
-  .nav{padding:16px 20px}
+  .nav{padding:14px 20px}
+  .nav-word{font-size:24px}
+  .px-mark{--c:7px;--g:2px;margin:0 3px}
+  .nav-cta{padding:11px 18px}
   .nav-links a:not(.nav-cta){display:none}
-  .hero{padding:76px 20px 32px}
+  .hero{padding:80px 20px 32px}
   .section{padding:80px 20px 60px}
   .stack-wrap,.quotes-wrap{padding-left:20px;padding-right:20px}
   .contact{padding:80px 20px 60px}
@@ -186,6 +190,16 @@ img{max-width:100%;display:block}
   .products-intro{margin-left:0}
   .stack-box{padding:32px 24px}
   .shot-phone{width:130px}
+}
+/* below ~380px the logo + CTA together set the nav's min-content width, which
+   would push the page wider than the screen — step both down to keep it fitting */
+@media (max-width:380px){
+  .nav{padding:12px 16px}
+  .nav-word{font-size:21px}
+  .px-mark{--c:6px;--g:2px;margin:0 2.5px}
+  .nav-links{font-size:12.5px}
+  .nav-cta{padding:10px 14px}
+  .hero{padding:70px 20px 32px}
 }
 </style>
 </head>
