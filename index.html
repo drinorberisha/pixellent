@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pixellent_ — web · mobile · ai</title>
+<meta name="description" content="Full-service studio for web, mobile and AI products. Six shipped products of our own — we build yours with the same obsession.">
+<link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0a0e;
+  --acid:#d6fb41;
+  --paper:#eef0ea;
+  --fog:#9a9ba4;
+  --cell:#2b2b33;
+  --line:#1c1c23;
+  --hover:#101016;
+  --meta:#6b6c76;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--ink);color:var(--paper)}
+body{font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--acid);text-decoration:none}
+a:hover{color:var(--paper)}
+img{max-width:100%;display:block}
+::selection{background:var(--acid);color:var(--ink)}
+@keyframes px-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes px-blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes px-dot{0%,30%{opacity:1}31%,100%{opacity:.14}}
+@keyframes px-scan{0%{opacity:.14}8%{opacity:1}16%,100%{opacity:.14}}
+@keyframes px-wink{0%,88%{opacity:1}89%,96%{opacity:.15}97%,100%{opacity:1}}
+@keyframes px-flicker{0%,100%{opacity:1}7%{opacity:.2}9%{opacity:1}47%{opacity:.3}49%{opacity:1}82%{opacity:.25}84%{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;animation-iteration-count:1 !important}}
+
+/* SCROLL RAIL */
+.rail{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.rail span{width:7px;height:7px;background:var(--cell);opacity:.6}
+.rail span.lit{background:var(--acid);opacity:1}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:linear-gradient(var(--ink) 60%, rgba(10,10,14,0))}
+.nav-logo{display:flex;align-items:center;gap:10px;color:var(--paper)}
+.nav-logo:hover{color:var(--paper)}
+.px-mark{display:grid;grid-template-columns:repeat(3,11px);grid-template-rows:repeat(3,11px);gap:3px}
+.px-mark span{display:block;background:var(--cell)}
+.px-mark span.on{background:var(--acid);animation:px-wink 4.2s steps(1) infinite}
+.nav-word{font-weight:700;font-size:20px;letter-spacing:-.02em}
+.nav-links{display:flex;gap:28px;align-items:center;font-family:var(--mono);font-size:13px}
+.nav-links a{color:var(--fog)}
+.nav-links a:hover{color:var(--paper)}
+.nav-cta{color:var(--ink) !important;background:var(--acid);padding:9px 18px;font-weight:600}
+.nav-cta:hover{background:var(--paper);color:var(--ink) !important}
+
+/* HERO */
+.hero{position:relative;height:100svh;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;padding:76px 40px 40px;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-inner{position:relative;pointer-events:none;display:flex;flex-direction:column;gap:20px}
+.kicker{font-family:var(--mono);font-size:13px;color:var(--acid);letter-spacing:.08em}
+.hero h1{margin:0;font-size:clamp(48px,8.5vw,124px);line-height:.92;letter-spacing:-.04em;font-weight:700;text-wrap:balance}
+.cursor{color:var(--acid);animation:px-blink 1.1s steps(1) infinite}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap}
+.hero-sub{margin:0;max-width:460px;font-size:18px;line-height:1.55;color:var(--fog)}
+.hero-ctas{display:flex;gap:14px;pointer-events:auto}
+.btn-ghost{border:1px solid var(--cell);color:var(--paper);padding:15px 26px;font-family:var(--mono);font-size:14px}
+.btn-ghost:hover{border-color:var(--acid);color:var(--acid)}
+.btn-solid{background:var(--acid);color:var(--ink);padding:15px 26px;font-family:var(--mono);font-size:14px;font-weight:600}
+.btn-solid:hover{background:var(--paper);color:var(--ink)}
+
+/* MARQUEE */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;overflow:hidden}
+.marquee-track{display:flex;width:max-content;animation:px-marquee 28s linear infinite}
+.marquee-track span{display:flex;align-items:center;gap:36px;padding-right:36px;font-family:var(--mono);font-size:14px;color:var(--meta);white-space:nowrap}
+.marquee-track b{color:var(--acid);font-weight:400}
+
+/* SECTIONS */
+.section{padding:110px 40px 90px;max-width:1280px;margin:0 auto}
+.section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:56px}
+.section-num{font-family:var(--mono);font-size:13px;color:var(--acid)}
+.section-head h2{margin:0;font-size:clamp(34px,4.5vw,58px);letter-spacing:-.03em;font-weight:700}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.service{background:var(--ink);padding:36px 30px 44px;display:flex;flex-direction:column;gap:18px;transition:background .12s steps(2)}
+.service:hover{background:var(--hover)}
+.service-tag{font-family:var(--mono);font-size:12px;color:var(--meta)}
+.service-name{font-size:26px;font-weight:600;letter-spacing:-.02em}
+.service p{margin:0;color:var(--fog);line-height:1.6;font-size:15px}
+.dots{margin-top:auto;display:flex;gap:6px}
+.dots span{width:8px;height:8px;background:var(--acid);animation:px-dot 1.8s steps(1) infinite}
+.dots span:nth-child(2){animation-delay:.6s;opacity:.14}
+.dots span:nth-child(3){animation-delay:1.2s;opacity:.14}
+
+/* PRODUCTS */
+.products-intro{margin:0 0 48px 45px;color:var(--fog);max-width:560px;line-height:1.6}
+.product{display:grid;grid-template-columns:70px 1fr 1.1fr;gap:32px;padding:44px 0;border-top:1px solid var(--line);align-items:center;transition:background .12s steps(2)}
+.product:hover{background:#0d0d12}
+.product-idx{font-family:var(--mono);font-size:13px;color:var(--meta)}
+.product-info{display:flex;flex-direction:column;gap:14px}
+.product-title{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.product-title h3{margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:700;letter-spacing:-.03em}
+.product-tag{font-family:var(--mono);font-size:11px;color:var(--acid);border:1px solid var(--cell);padding:4px 9px;white-space:nowrap}
+.product-points{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.product-points li{display:flex;gap:11px;color:var(--fog);font-size:15px;line-height:1.5}
+.product-points li::before{content:"▪";color:var(--acid);flex:none}
+.product-shots{display:flex;gap:14px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.shot-phone{width:150px;border:1px solid var(--cell);background:linear-gradient(160deg,#14141b,#0d0d12)}
+.shot-phone img{width:100%;aspect-ratio:2/3;object-fit:cover}
+.shot-wide{width:100%;max-width:460px;border:1px solid var(--cell);background:linear-gradient(160deg,#14141b,#0d0d12)}
+.shot-wide img{width:100%}
+
+/* PROCESS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:40px}
+.step{display:flex;flex-direction:column;gap:14px}
+.step-head{display:flex;align-items:center;gap:12px}
+.step-num{font-family:var(--mono);font-size:12px;color:var(--acid)}
+.step-scan{display:flex;gap:4px}
+.step-scan span{width:6px;height:6px;background:var(--acid);opacity:.14;animation:px-scan 2.4s steps(1) infinite}
+.step-scan span:nth-child(2){animation-delay:.2s}
+.step-scan span:nth-child(3){animation-delay:.4s}
+.step-scan span:nth-child(4){animation-delay:.6s}
+.step-scan span:nth-child(5){animation-delay:.8s}
+.step-scan span:nth-child(6){animation-delay:1s}
+.step-scan span:nth-child(7){animation-delay:1.2s}
+.step-scan span:nth-child(8){animation-delay:1.4s}
+.step-name{font-size:21px;font-weight:600}
+.step p{margin:0;color:var(--fog);font-size:14.5px;line-height:1.6}
+
+/* STACK */
+.stack-wrap{padding:0 40px 100px;max-width:1280px;margin:0 auto}
+.stack-box{border:1px solid var(--line);padding:44px 40px;display:flex;flex-direction:column;gap:24px}
+.stack-cmd{font-family:var(--mono);font-size:13px;color:var(--meta)}
+.stack-tags{display:flex;flex-wrap:wrap;gap:10px}
+.stack-tags span{font-family:var(--mono);font-size:13px;color:var(--paper);border:1px solid var(--cell);padding:8px 14px;transition:color .12s steps(2),border-color .12s steps(2)}
+.stack-tags span:hover{border-color:var(--acid);color:var(--acid)}
+
+/* TESTIMONIALS */
+.quotes-wrap{padding:0 40px 110px;max-width:1280px;margin:0 auto}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.quote{margin:0;background:var(--ink);padding:40px 34px;display:flex;flex-direction:column;gap:22px}
+.quote blockquote{margin:0;font-size:19px;line-height:1.55;letter-spacing:-.01em}
+.quote figcaption{font-family:var(--mono);font-size:12.5px;color:var(--meta)}
+.quote figcaption b{color:var(--acid);font-weight:400}
+
+/* CONTACT */
+.contact{border-top:1px solid var(--line);padding:110px 40px 90px;position:relative;overflow:hidden}
+.contact canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.contact-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:64px;position:relative}
+.contact-copy{display:flex;flex-direction:column;gap:24px}
+.contact-copy h2{margin:0;font-size:clamp(44px,6vw,84px);line-height:.95;letter-spacing:-.04em;font-weight:700}
+.contact-copy h2 span{color:var(--acid)}
+.contact-copy p{margin:0;color:var(--fog);max-width:420px;line-height:1.6}
+.contact-meta{font-family:var(--mono);font-size:14px;color:var(--meta);display:flex;flex-direction:column;gap:8px}
+.contact-form{display:flex;flex-direction:column;gap:14px}
+.contact-form input,.contact-form textarea{background:var(--hover);border:1px solid var(--cell);color:var(--paper);padding:15px 16px;font-family:var(--mono);font-size:14px;outline:none}
+.contact-form textarea{resize:vertical}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--acid)}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:var(--meta)}
+.contact-form button{background:var(--acid);border:none;color:var(--ink);padding:16px;font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer}
+.contact-form button:hover{background:var(--paper)}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--line);padding:26px 40px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;color:var(--meta);flex-wrap:wrap;gap:12px}
+
+/* RESPONSIVE */
+@media (max-width:900px){
+  .product{grid-template-columns:1fr;gap:24px;padding:36px 0}
+  .product-idx{order:-1}
+  .product-shots{justify-content:flex-start}
+  .contact-grid{grid-template-columns:1fr;gap:48px}
+}
+@media (max-width:720px){
+  .rail{display:none}
+  .nav{padding:16px 20px}
+  .nav-links a:not(.nav-cta){display:none}
+  .hero{padding:76px 20px 32px}
+  .section{padding:80px 20px 60px}
+  .stack-wrap,.quotes-wrap{padding-left:20px;padding-right:20px}
+  .contact{padding:80px 20px 60px}
+  .footer{padding:26px 20px}
+  .products-intro{margin-left:0}
+  .stack-box{padding:32px 24px}
+  .shot-phone{width:130px}
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL RAIL -->
+<div class="rail" id="rail" aria-hidden="true">
+  <span class="lit"></span><span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#top" class="nav-logo" aria-label="pixellent home">
+    <span class="px-mark" aria-hidden="true">
+      <span class="on"></span><span class="on" style="animation-delay:.6s"></span><span></span>
+      <span class="on" style="animation-delay:1.3s"></span><span></span><span class="on" style="animation-delay:2.1s"></span>
+      <span></span><span class="on" style="animation-delay:2.9s"></span><span class="on" style="animation-delay:3.6s"></span>
+    </span>
+    <span class="nav-word">pixellent<span style="color:var(--acid)">_</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#services">services</a>
+    <a href="#products">products</a>
+    <a href="#process">process</a>
+    <a href="#contact" class="nav-cta">start a project ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header id="top" class="hero">
+  <canvas id="px-field" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">// web · mobile · ai — prishtina to anywhere</div>
+    <h1>We bring your<br>idea to life<span class="cursor">_</span></h1>
+    <div class="hero-row">
+      <p class="hero-sub">Full-service studio for web, mobile and AI products. Six shipped products of our own — we build yours with the same obsession.</p>
+      <div class="hero-ctas">
+        <a href="#products" class="btn-ghost">see the work</a>
+        <a href="#contact" class="btn-solid">start a project ↗</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TRUSTED MARQUEE -->
+<section class="marquee" aria-label="clients">
+  <div class="marquee-track">
+    <span><b>▪</b>Magic Event</span><span><b>▪</b>Berisha Projekt</span><span><b>▪</b>Foleja Residence</span><span><b>▪</b>MHK Bausanierung</span>
+    <span><b>▪</b>Magic Event</span><span><b>▪</b>Berisha Projekt</span><span><b>▪</b>Foleja Residence</span><span><b>▪</b>MHK Bausanierung</span>
+    <span><b>▪</b>Magic Event</span><span><b>▪</b>Berisha Projekt</span><span><b>▪</b>Foleja Residence</span><span><b>▪</b>MHK Bausanierung</span>
+    <span><b>▪</b>Magic Event</span><span><b>▪</b>Berisha Projekt</span><span><b>▪</b>Foleja Residence</span><span><b>▪</b>MHK Bausanierung</span>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2 data-decode>What we do</h2>
+  </div>
+  <div class="services-grid">
+    <div class="service">
+      <div class="service-tag">srv/01 — web</div>
+      <div class="service-name">Web Development</div>
+      <p>Full-stack web applications built with modern frameworks. Blazing-fast, responsive, and scalable from day one.</p>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="service">
+      <div class="service-tag">srv/02 — mobile</div>
+      <div class="service-name">Mobile Development</div>
+      <p>Native and cross-platform mobile apps that deliver pixel-perfect experiences on every device.</p>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="service">
+      <div class="service-tag">srv/03 — ai</div>
+      <div class="service-name">AI &amp; Data Engineering</div>
+      <p>Intelligent ML pipelines and data solutions that turn raw information into competitive advantage.</p>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="section" style="padding-top:60px;padding-bottom:40px">
+  <div class="section-head" style="margin-bottom:12px">
+    <span class="section-num">02</span>
+    <h2 data-decode>Product suite</h2>
+  </div>
+  <p class="products-intro">Six products we designed, built and shipped ourselves. Proof we can do it for you.</p>
+  <div>
+
+    <div class="product">
+      <div class="product-idx">/01</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Classroom</h3><span class="product-tag">edtech</span></div>
+        <ul class="product-points">
+          <li>Classroom management for any type of course</li>
+          <li>Teachers manage multi-level courses</li>
+          <li>Skill-matching algorithm for teacher assignment</li>
+          <li>Student payments &amp; installment tracking</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-wide"><img src="assets/workcontent/classroom_showcase.png" alt="Classroom app screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-idx">/02</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Closer</h3><span class="product-tag">social</span></div>
+        <ul class="product-points">
+          <li>Proximity-based scoring of nearby users</li>
+          <li>Designed to bring people closer &amp; socialise</li>
+          <li>Real-time map of connections around you</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-phone"><img src="assets/workcontent/closer.png" alt="Closer app screenshot" loading="lazy"></div>
+        <div class="shot-phone"><img src="assets/workcontent/closer2.png" alt="Closer app map screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-idx">/03</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Ferma</h3><span class="product-tag">marketplace</span></div>
+        <ul class="product-points">
+          <li>Centralized marketplace for local farmers</li>
+          <li>Browse &amp; buy from nearby farms in one place</li>
+          <li>Direct farmer-to-consumer sales</li>
+          <li>Support local agriculture &amp; fresh produce</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-wide"><img src="assets/workcontent/ferma.png" alt="Ferma marketplace screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-idx">/04</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Avokati</h3><span class="product-tag">legaltech · ai</span></div>
+        <ul class="product-points">
+          <li>Centralized case &amp; document management</li>
+          <li>AI assistant trained on up-to-date country laws</li>
+          <li>Intelligent article &amp; law suggestions per case</li>
+          <li>Streamlined lawyer workflow &amp; collaboration</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-wide"><img src="assets/workcontent/Avokati.png" alt="Avokati legal platform screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-idx">/05</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Parking</h3><span class="product-tag">mobility</span></div>
+        <ul class="product-points">
+          <li>GPS auto-detects your zone &amp; shows live pricing</li>
+          <li>Set a timer, pay in-app &amp; track active session</li>
+          <li>Managers verify sessions &amp; issue instant fines</li>
+          <li>Admins map zones via smart polygon algorithm</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-phone"><img src="assets/workcontent/park1.png" alt="Parking app zone screenshot" loading="lazy"></div>
+        <div class="shot-phone"><img src="assets/workcontent/park2.png" alt="Parking app session screenshot" loading="lazy"></div>
+        <div class="shot-phone"><img src="assets/workcontent/park3.png" alt="Parking app payment screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-idx">/06</div>
+      <div class="product-info">
+        <div class="product-title"><h3>Qitash</h3><span class="product-tag">events</span></div>
+        <ul class="product-points">
+          <li>Browse &amp; discover local events</li>
+          <li>Register &amp; get a QR code ticket instantly</li>
+          <li>View attendees, date &amp; venue details</li>
+          <li>Businesses create &amp; manage their own events</li>
+        </ul>
+      </div>
+      <div class="product-shots">
+        <div class="shot-phone"><img src="assets/workcontent/Qitash.png" alt="Qitash events app screenshot" loading="lazy"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="section" style="padding-top:100px;padding-bottom:100px">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2 data-decode>How we work</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">[01]</span>
+        <span class="step-scan"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="step-name">Discover</div>
+      <p>We dig into the problem, users, and constraints before a single pixel is drawn.</p>
+    </div>
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">[02]</span>
+        <span class="step-scan"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="step-name">Design</div>
+      <p>Rapid prototypes you can click — validated with real users, not opinions.</p>
+    </div>
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">[03]</span>
+        <span class="step-scan"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="step-name">Build</div>
+      <p>Short sprints, working software every week, and a demo you can share.</p>
+    </div>
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">[04]</span>
+        <span class="step-scan"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="step-name">Ship &amp; grow</div>
+      <p>Launch, measure, iterate. We stay on for what comes after day one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack-wrap">
+  <div class="stack-box">
+    <div class="stack-cmd">$ stack --list</div>
+    <div class="stack-tags">
+      <span style="animation:px-flicker 5.0s steps(1) 0.00s infinite">react</span>
+      <span style="animation:px-flicker 6.7s steps(1) 0.83s infinite">react-native</span>
+      <span style="animation:px-flicker 8.4s steps(1) 1.66s infinite">three.js</span>
+      <span style="animation:px-flicker 6.1s steps(1) 2.49s infinite">node</span>
+      <span style="animation:px-flicker 7.8s steps(1) 3.32s infinite">typescript</span>
+      <span style="animation:px-flicker 5.5s steps(1) 4.15s infinite">python</span>
+      <span style="animation:px-flicker 7.2s steps(1) 4.98s infinite">postgres</span>
+      <span style="animation:px-flicker 8.9s steps(1) 0.81s infinite">tensorflow</span>
+      <span style="animation:px-flicker 6.6s steps(1) 1.64s infinite">aws</span>
+      <span style="animation:px-flicker 8.3s steps(1) 2.47s infinite">docker</span>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="quotes-wrap">
+  <div class="quotes">
+    <figure class="quote">
+      <blockquote>“Placeholder — send us a real client quote and we drop it in here.”</blockquote>
+      <figcaption><b>—</b> Client name, Company</figcaption>
+    </figure>
+    <figure class="quote">
+      <blockquote>“Placeholder — a second testimonial keeps this section balanced.”</blockquote>
+      <figcaption><b>—</b> Client name, Company</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <canvas id="px-contact" aria-hidden="true"></canvas>
+  <div class="contact-grid">
+    <div class="contact-copy">
+      <h2>Have an idea?<br><span>Let's build it.</span></h2>
+      <p>Tell us what you're making. We reply within one business day — usually faster.</p>
+      <div class="contact-meta">
+        <span>hello@pixellent-solutions.com</span>
+        <span>pixellent-solutions.com</span>
+      </div>
+    </div>
+    <form class="contact-form" id="contact-form">
+      <input placeholder="your name" name="name" autocomplete="name">
+      <input placeholder="email" type="email" name="email" autocomplete="email">
+      <textarea placeholder="what are we building?" name="message" rows="5"></textarea>
+      <button type="submit" id="send-btn">send it ↗</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>© 2026 Pixellent Solutions</span>
+  <span>web · mobile · ai<span style="color:var(--acid)">_</span></span>
+</footer>
+
+<script>
+(function () {
+  const ACID = '#d6fb41', PAPER = '#eef0ea', CELLGREY = '#2b2b33';
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- hero pixel field with logo formation intro ---
+  // cells sparkle, snap into the 3x3 mark block-by-block, hold, release into
+  // the decay field, then re-form at the next spot every cycle
+  const canvas = document.getElementById('px-field');
+  const ctx = canvas.getContext('2d');
+  const CELL = 26, GAP = 3;
+  let cols, rows, cells = [];
+
+  const LOGO_ON = [[0,0],[1,0],[0,1],[2,1],[1,2],[2,2]], LOGO_OFF = [[2,0],[1,1],[0,2]];
+  let logoBlocks = [], offBlocks = [];
+  const SPOTS = [[0.62,0.34],[0.2,0.28],[0.82,0.55],[0.42,0.22],[0.7,0.3],[0.28,0.5]];
+  let spotIdx = 0;
+
+  function computeLogo() {
+    const B = 2, G = 1, span = 3 * B + 2 * G;
+    const fx = SPOTS[spotIdx % SPOTS.length][0], fy = SPOTS[spotIdx % SPOTS.length][1];
+    const ox = Math.round(cols * fx - span / 2), oy = Math.round(rows * fy - span / 2);
+    const block = function (g) {
+      const gx = g[0], gy = g[1], idxs = [];
+      for (let y = 0; y < B; y++) for (let x = 0; x < B; x++) {
+        const cxx = ox + gx * (B + G) + x, cyy = oy + gy * (B + G) + y;
+        if (cxx >= 0 && cxx < cols && cyy >= 0 && cyy < rows) idxs.push(cyy * cols + cxx);
+      }
+      return idxs;
+    };
+    logoBlocks = LOGO_ON.map(block);
+    offBlocks = LOGO_OFF.map(block);
+  }
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    canvas.width = r.width * devicePixelRatio;
+    canvas.height = r.height * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    cols = Math.ceil(r.width / CELL);
+    rows = Math.ceil(r.height / CELL);
+    cells = new Array(cols * rows).fill(0);
+    computeLogo();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let mx = -999, my = -999;
+  canvas.parentElement.addEventListener('pointermove', function (e) {
+    const r = canvas.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+  });
+
+  // timings are authored in 60fps frames — dtF converts real elapsed time to
+  // frame units so pacing is identical on 60/120/144Hz displays.
+  // SPEED scales the whole hero animation (formation, decay, twinkle).
+  const FRAME = 1000 / 60, SPEED = 2;
+  const T_FORM = 45, T_STEP = 9, T_HOLD_END = 250, T_GONE = 285, T_CYCLE = 640;
+  let t = reduced ? 9999 : 0;
+  let last = performance.now();
+
+  function tick(now) {
+    requestAnimationFrame(tick);
+    const dtF = Math.min((now - last) / FRAME, 4) * SPEED;
+    last = now;
+    t += dtF;
+    if (!reduced && t >= T_CYCLE) { t = 0; spotIdx++; computeLogo(); }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const decay = Math.pow(0.955, dtF);
+    // intro phase 1: rising sparkle noise
+    if (t < T_FORM) {
+      const p = 0.002 + (t / T_FORM) * 0.01;
+      for (let k = 0; k < cells.length * p * dtF; k++) cells[(Math.random() * cells.length) | 0] = Math.max(Math.random(), .4);
+    }
+    // ambient twinkle always
+    if (!reduced && Math.random() < 0.06 * dtF) cells[(Math.random() * cells.length) | 0] = .55;
+    for (let i = 0; i < cells.length; i++) {
+      const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
+      const dx = cx + CELL / 2 - mx, dy = cy + CELL / 2 - my;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 130) cells[i] = Math.max(cells[i], 1 - d / 130);
+      cells[i] *= decay;
+      const v = cells[i];
+      if (v > 0.02) {
+        ctx.globalAlpha = Math.min(v, 1) * 0.9;
+        ctx.fillStyle = ACID;
+        ctx.fillRect(cx + GAP / 2, cy + GAP / 2, CELL - GAP, CELL - GAP);
+      } else {
+        ctx.globalAlpha = 0.05;
+        ctx.fillStyle = PAPER;
+        ctx.fillRect(cx + CELL / 2 - 1, cy + CELL / 2 - 1, 2, 2);
+      }
+    }
+    // intro phases 2-3: blocks snap on one by one, hold, then release into decay
+    if (t >= T_FORM && t < T_GONE) {
+      const fade = t > T_HOLD_END ? Math.max(0, 1 - (t - T_HOLD_END) / (T_GONE - T_HOLD_END)) : 1;
+      logoBlocks.forEach(function (blk, bi) {
+        if (t < T_FORM + bi * T_STEP) return;
+        // per-block flicker for 1 frame-step as it lands
+        const justLanded = t - (T_FORM + bi * T_STEP) < 4 && (Math.floor(t) & 2);
+        ctx.globalAlpha = (justLanded ? .35 : 1) * fade;
+        ctx.fillStyle = ACID;
+        blk.forEach(function (i) {
+          const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
+          ctx.fillRect(cx + GAP / 2, cy + GAP / 2, CELL - GAP, CELL - GAP);
+          if (t > T_HOLD_END) cells[i] = Math.max(cells[i], fade); // hand off to decay field
+        });
+      });
+      if (t >= T_FORM + 6 * T_STEP) {
+        ctx.globalAlpha = 0.75 * fade;
+        ctx.fillStyle = CELLGREY;
+        offBlocks.forEach(function (blk) {
+          blk.forEach(function (i) {
+            const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
+            ctx.fillRect(cx + GAP / 2, cy + GAP / 2, CELL - GAP, CELL - GAP);
+          });
+        });
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  requestAnimationFrame(tick);
+
+  // --- decode-scramble on section titles ---
+  const CH = '▪▓_/#01<>';
+  const io = new IntersectionObserver(function (es) {
+    es.forEach(function (en) {
+      const el = en.target;
+      if (!en.isIntersecting || el.dataset.done) return;
+      el.dataset.done = '1';
+      const fin = el.dataset.final;
+      if (reduced) { el.textContent = fin; return; }
+      let step = 0;
+      const total = 12;
+      const iv = setInterval(function () {
+        step++;
+        if (step >= total) { el.textContent = fin; clearInterval(iv); return; }
+        const reveal = Math.floor(fin.length * step / total);
+        el.textContent = fin.slice(0, reveal) + fin.slice(reveal).split('').map(function (c) {
+          return c === ' ' ? ' ' : CH[(Math.random() * CH.length) | 0];
+        }).join('');
+      }, 50);
+    });
+  }, { threshold: 0.5 });
+  setTimeout(function () {
+    document.querySelectorAll('[data-decode]').forEach(function (el) {
+      el.dataset.final = el.textContent;
+      io.observe(el);
+    });
+  }, 100);
+
+  // --- contact section ambient field ---
+  const c2 = document.getElementById('px-contact');
+  const x2 = c2.getContext('2d');
+  const C2 = 30, G2 = 4;
+  let ccols, crows, cc = [];
+  function rz2() {
+    const r = c2.getBoundingClientRect();
+    c2.width = r.width * devicePixelRatio;
+    c2.height = r.height * devicePixelRatio;
+    x2.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    ccols = Math.ceil(r.width / C2);
+    crows = Math.ceil(r.height / C2);
+    cc = new Array(ccols * crows).fill(0);
+  }
+  rz2();
+  window.addEventListener('resize', rz2);
+  let m2x = -999, m2y = -999;
+  c2.parentElement.addEventListener('pointermove', function (e) {
+    const r = c2.getBoundingClientRect();
+    m2x = e.clientX - r.left;
+    m2y = e.clientY - r.top;
+  });
+  let last2 = performance.now();
+  function tick2(now) {
+    requestAnimationFrame(tick2);
+    const dtF = Math.min((now - last2) / FRAME, 4);
+    last2 = now;
+    const decay2 = Math.pow(0.95, dtF);
+    x2.clearRect(0, 0, c2.width, c2.height);
+    if (!reduced && Math.random() < 0.05 * dtF) cc[(Math.random() * cc.length) | 0] = .5;
+    for (let i = 0; i < cc.length; i++) {
+      const cx = (i % ccols) * C2, cy = Math.floor(i / ccols) * C2;
+      const dx = cx + C2 / 2 - m2x, dy = cy + C2 / 2 - m2y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 150) cc[i] = Math.max(cc[i], 1 - d / 150);
+      cc[i] *= decay2;
+      if (cc[i] > 0.02) {
+        x2.globalAlpha = Math.min(cc[i], 1) * 0.35;
+        x2.fillStyle = ACID;
+        x2.fillRect(cx + G2 / 2, cy + G2 / 2, C2 - G2, C2 - G2);
+      }
+    }
+    x2.globalAlpha = 1;
+  }
+  requestAnimationFrame(tick2);
+
+  // --- scroll progress rail ---
+  const railCells = document.querySelectorAll('#rail span');
+  let lastLit = 1;
+  window.addEventListener('scroll', function () {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const lit = Math.max(1, Math.round((scrollY / Math.max(max, 1)) * 12));
+    if (lit === lastLit) return;
+    lastLit = lit;
+    railCells.forEach(function (el, i) { el.classList.toggle('lit', i < lit); });
+  }, { passive: true });
+
+  // --- contact form — swap the button label on submit ---
+  document.getElementById('contact-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    document.getElementById('send-btn').textContent = 'sent ✓ — we will be in touch';
+  });
+})();
+</script>
+</body>
+</html>
