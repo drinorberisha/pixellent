@@ -16,6 +16,7 @@
   --paper:#eef0ea;
   --fog:#9a9ba4;
   --cell:#2b2b33;
+  --cell-dim:#26262e;
   --line:#1c1c23;
   --hover:#101016;
   --meta:#6b6c76;
@@ -32,7 +33,6 @@ img{max-width:100%;display:block}
 @keyframes px-blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes px-dot{0%,30%{opacity:1}31%,100%{opacity:.14}}
 @keyframes px-scan{0%{opacity:.14}8%{opacity:1}16%,100%{opacity:.14}}
-@keyframes px-wink{0%,88%{opacity:1}89%,96%{opacity:.15}97%,100%{opacity:1}}
 @keyframes px-flicker{0%,100%{opacity:1}7%{opacity:.2}9%{opacity:1}47%{opacity:.3}49%{opacity:1}82%{opacity:.25}84%{opacity:1}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;animation-iteration-count:1 !important}}
 
@@ -43,12 +43,14 @@ img{max-width:100%;display:block}
 
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:linear-gradient(var(--ink) 60%, rgba(10,10,14,0))}
-.nav-logo{display:flex;align-items:center;gap:10px;color:var(--paper)}
+.nav-logo{display:flex;align-items:center;color:var(--paper)}
 .nav-logo:hover{color:var(--paper)}
-.px-mark{display:grid;grid-template-columns:repeat(3,11px);grid-template-rows:repeat(3,11px);gap:3px}
-.px-mark span{display:block;background:var(--cell)}
-.px-mark span.on{background:var(--acid);animation:px-wink 4.2s steps(1) infinite}
-.nav-word{font-weight:700;font-size:20px;letter-spacing:-.02em}
+/* the mark stands in for the "x" in pi_x_ellent — sized to the wordmark */
+.px-mark{display:inline-grid;grid-template-columns:repeat(3,5.3px);grid-template-rows:repeat(3,5.3px);gap:1.5px;margin:0 3.5px}
+.px-mark span{display:block;background:var(--cell-dim)}
+.px-mark span.on{background:var(--acid)}
+.px-mark span.ember{background:var(--acid);opacity:.38}
+.nav-word{display:flex;align-items:center;font-weight:700;font-size:20px;letter-spacing:-.02em}
 .nav-links{display:flex;gap:28px;align-items:center;font-family:var(--mono);font-size:13px}
 .nav-links a{color:var(--fog)}
 .nav-links a:hover{color:var(--paper)}
@@ -198,12 +200,11 @@ img{max-width:100%;display:block}
 <!-- NAV -->
 <nav class="nav">
   <a href="#top" class="nav-logo" aria-label="pixellent home">
-    <span class="px-mark" aria-hidden="true">
-      <span class="on"></span><span class="on" style="animation-delay:.6s"></span><span></span>
-      <span class="on" style="animation-delay:1.3s"></span><span></span><span class="on" style="animation-delay:2.1s"></span>
-      <span></span><span class="on" style="animation-delay:2.9s"></span><span class="on" style="animation-delay:3.6s"></span>
-    </span>
-    <span class="nav-word">pixellent<span style="color:var(--acid)">_</span></span>
+    <span class="nav-word">pi<span class="px-mark" aria-hidden="true">
+      <span class="on"></span><span></span><span class="ember"></span>
+      <span></span><span class="on"></span><span></span>
+      <span class="ember"></span><span></span><span class="on"></span>
+    </span>ellent</span>
   </a>
   <div class="nav-links">
     <a href="#services">services</a>
@@ -492,8 +493,9 @@ img{max-width:100%;display:block}
   const CELL = 26, GAP = 3;
   let cols, rows, cells = [];
 
-  const LOGO_ON = [[0,0],[1,0],[0,1],[2,1],[1,2],[2,2]], LOGO_OFF = [[2,0],[1,1],[0,2]];
-  let logoBlocks = [], offBlocks = [];
+  // the mark: acid diagonal, dim ember on the counter-diagonal corners, grey elsewhere
+  const LOGO_ON = [[0,0],[1,1],[2,2]], LOGO_EMBER = [[2,0],[0,2]], LOGO_OFF = [[1,0],[0,1],[2,1],[1,2]];
+  let logoBlocks = [], emberBlocks = [], offBlocks = [];
   const SPOTS = [[0.62,0.34],[0.2,0.28],[0.82,0.55],[0.42,0.22],[0.7,0.3],[0.28,0.5]];
   let spotIdx = 0;
 
@@ -510,6 +512,7 @@ img{max-width:100%;display:block}
       return idxs;
     };
     logoBlocks = LOGO_ON.map(block);
+    emberBlocks = LOGO_EMBER.map(block);
     offBlocks = LOGO_OFF.map(block);
   }
 
@@ -588,13 +591,22 @@ img{max-width:100%;display:block}
           if (t > T_HOLD_END) cells[i] = Math.max(cells[i], fade); // hand off to decay field
         });
       });
-      if (t >= T_FORM + 6 * T_STEP) {
+      if (t >= T_FORM + logoBlocks.length * T_STEP) {
         ctx.globalAlpha = 0.75 * fade;
         ctx.fillStyle = CELLGREY;
         offBlocks.forEach(function (blk) {
           blk.forEach(function (i) {
             const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
             ctx.fillRect(cx + GAP / 2, cy + GAP / 2, CELL - GAP, CELL - GAP);
+          });
+        });
+        ctx.globalAlpha = 0.38 * fade;
+        ctx.fillStyle = ACID;
+        emberBlocks.forEach(function (blk) {
+          blk.forEach(function (i) {
+            const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
+            ctx.fillRect(cx + GAP / 2, cy + GAP / 2, CELL - GAP, CELL - GAP);
+            if (t > T_HOLD_END) cells[i] = Math.max(cells[i], fade * .38); // hand off to decay field
           });
         });
       }
