@@ -499,6 +499,16 @@ img{max-width:100%;display:block}
   const ACID = '#d6fb41', PAPER = '#eef0ea', CELLGREY = '#2b2b33';
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // The proximity trail only makes sense with a hovering pointer. On a phone
+  // there is nothing to follow until you tap, so it just flashes under the
+  // finger — disable it there. Keyed on pointer capability rather than width so
+  // a touchscreen laptop still keeps its trackpad trail.
+  // Tested for the touch signature specifically rather than requiring
+  // hover:hover — some environments report hover:none AND pointer:none, and in
+  // anything ambiguous we want the trail left on rather than silently dropped.
+  const touchOnly = window.matchMedia('(hover:none) and (pointer:coarse)');
+  let trail = !touchOnly.matches;
+
   // --- hero pixel field with logo formation intro ---
   // cells sparkle, snap into the 3x3 mark block-by-block, hold, release into
   // the decay field, then re-form at the next spot every cycle
@@ -515,7 +525,10 @@ img{max-width:100%;display:block}
   let spotIdx = 0;
 
   function computeLogo() {
-    const B = 2, G = 1, span = 3 * B + 2 * G;
+    // 2x2-cell blocks give an 8x8-cell mark (~208px), which eats over half the
+    // width of a phone. On a narrow field drop to 1x1 blocks — a 5x5-cell mark
+    // (~130px) that still reads as the X.
+    const B = cols < 26 ? 1 : 2, G = 1, span = 3 * B + 2 * G;
     const fx = SPOTS[spotIdx % SPOTS.length][0], fy = SPOTS[spotIdx % SPOTS.length][1];
     const ox = Math.round(cols * fx - span / 2), oy = Math.round(rows * fy - span / 2);
     const block = function (g) {
@@ -557,6 +570,7 @@ img{max-width:100%;display:block}
 
   let mx = -999, my = -999;
   canvas.parentElement.addEventListener('pointermove', function (e) {
+    if (!trail) return;
     const r = canvas.getBoundingClientRect();
     mx = e.clientX - r.left;
     my = e.clientY - r.top;
@@ -595,9 +609,11 @@ img{max-width:100%;display:block}
     ctx.fillStyle = PAPER;
     for (let i = 0; i < cells.length; i++) {
       const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
-      const dx = cx + CELL / 2 - mx, dy = cy + CELL / 2 - my;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 130) cells[i] = Math.max(cells[i], 1 - d / 130);
+      if (trail) { // skipped on touch: saves a sqrt per cell per frame too
+        const dx = cx + CELL / 2 - mx, dy = cy + CELL / 2 - my;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 130) cells[i] = Math.max(cells[i], 1 - d / 130);
+      }
       cells[i] *= decay;
       if (cells[i] > 0.02) litBuf[litN++] = i;
       else ctx.fillRect(cx + CELL / 2 - 1, cy + CELL / 2 - 1, 2, 2);
@@ -712,10 +728,19 @@ img{max-width:100%;display:block}
   window.addEventListener('resize', rz2);
   let m2x = -999, m2y = -999;
   c2.parentElement.addEventListener('pointermove', function (e) {
+    if (!trail) return;
     const r = c2.getBoundingClientRect();
     m2x = e.clientX - r.left;
     m2y = e.clientY - r.top;
   });
+
+  // re-evaluate if a mouse is attached later (or the device is rotated/emulated)
+  function syncTrail() {
+    trail = !touchOnly.matches;
+    if (!trail) { mx = my = m2x = m2y = -999; } // park the hotspot off-canvas
+  }
+  if (touchOnly.addEventListener) touchOnly.addEventListener('change', syncTrail);
+  else if (touchOnly.addListener) touchOnly.addListener(syncTrail);
   let last2 = performance.now();
   let running2 = false, rafId2 = 0;
   function tick2(now) {
@@ -729,9 +754,11 @@ img{max-width:100%;display:block}
     x2.fillStyle = ACID;
     for (let i = 0; i < cc.length; i++) {
       const cx = (i % ccols) * C2, cy = Math.floor(i / ccols) * C2;
-      const dx = cx + C2 / 2 - m2x, dy = cy + C2 / 2 - m2y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 150) cc[i] = Math.max(cc[i], 1 - d / 150);
+      if (trail) {
+        const dx = cx + C2 / 2 - m2x, dy = cy + C2 / 2 - m2y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 150) cc[i] = Math.max(cc[i], 1 - d / 150);
+      }
       cc[i] *= decay2;
       if (cc[i] > 0.02) {
         x2.globalAlpha = Math.min(cc[i], 1) * 0.35;
