@@ -568,12 +568,16 @@ img{max-width:100%;display:block}
   resize();
   window.addEventListener('resize', resize);
 
-  let mx = -999, my = -999;
+  // moveAt gives the hotspot a shelf life: the glow is only applied while the
+  // pointer is actually moving, so a resting or departed cursor leaves a trail
+  // that fades instead of a spotlight that re-lights the same cells forever.
+  let mx = -999, my = -999, moveAt = -1e9;
   canvas.parentElement.addEventListener('pointermove', function (e) {
     if (!trail) return;
     const r = canvas.getBoundingClientRect();
     mx = e.clientX - r.left;
     my = e.clientY - r.top;
+    moveAt = performance.now();
   });
 
   // timings are authored in 60fps frames — dtF converts real elapsed time to
@@ -605,11 +609,12 @@ img{max-width:100%;display:block}
     // so setting it once per pass rather than once per cell drops ~1.7k string
     // parses per frame on a desktop-sized grid. Output is unchanged.
     let litN = 0;
+    const hot = trail && now - moveAt < 140;
     ctx.globalAlpha = 0.05;
     ctx.fillStyle = PAPER;
     for (let i = 0; i < cells.length; i++) {
       const cx = (i % cols) * CELL, cy = Math.floor(i / cols) * CELL;
-      if (trail) { // skipped on touch: saves a sqrt per cell per frame too
+      if (hot) { // skipped on touch and while the pointer rests: saves a sqrt per cell too
         const dx = cx + CELL / 2 - mx, dy = cy + CELL / 2 - my;
         const d = Math.sqrt(dx * dx + dy * dy);
         if (d < 130) cells[i] = Math.max(cells[i], 1 - d / 130);
@@ -664,8 +669,13 @@ img{max-width:100%;display:block}
   // Only animate while the hero is actually on screen — otherwise the field
   // kept redrawing every cell behind the rest of the page. `last` is reset on
   // resume so the paused interval doesn't arrive as one huge dt jump.
+  let heroSeen = true;
   function startHero() {
     if (running) return;
+    // Resuming after a real absence (tab switch, long scroll-away) would drop
+    // the viewer into an arbitrary phase — often the mark mid-dissolve.
+    // Restart the cycle at a fresh spot so they get a clean formation instead.
+    if (!reduced && performance.now() - last > 2000) { t = 0; spotIdx++; computeLogo(); }
     running = true;
     last = performance.now();
     rafId = requestAnimationFrame(tick);
@@ -673,7 +683,8 @@ img{max-width:100%;display:block}
   function stopHero() { running = false; cancelAnimationFrame(rafId); }
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (es) {
-      if (es[es.length - 1].isIntersecting) startHero(); else stopHero();
+      heroSeen = es[es.length - 1].isIntersecting;
+      if (heroSeen && !document.hidden) startHero(); else stopHero();
     }, { threshold: 0 }).observe(canvas.parentElement);
   } else startHero();
 
@@ -726,12 +737,13 @@ img{max-width:100%;display:block}
   }
   rz2();
   window.addEventListener('resize', rz2);
-  let m2x = -999, m2y = -999;
+  let m2x = -999, m2y = -999, moveAt2 = -1e9;
   c2.parentElement.addEventListener('pointermove', function (e) {
     if (!trail) return;
     const r = c2.getBoundingClientRect();
     m2x = e.clientX - r.left;
     m2y = e.clientY - r.top;
+    moveAt2 = performance.now();
   });
 
   // re-evaluate if a mouse is attached later (or the device is rotated/emulated)
@@ -749,12 +761,13 @@ img{max-width:100%;display:block}
     const dtF = Math.min((now - last2) / FRAME, 4);
     last2 = now;
     const decay2 = Math.pow(0.95, dtF);
+    const hot2 = trail && now - moveAt2 < 140;
     x2.clearRect(0, 0, c2.width, c2.height);
     if (!reduced && Math.random() < 0.05 * dtF) cc[(Math.random() * cc.length) | 0] = .5;
     x2.fillStyle = ACID;
     for (let i = 0; i < cc.length; i++) {
       const cx = (i % ccols) * C2, cy = Math.floor(i / ccols) * C2;
-      if (trail) {
+      if (hot2) {
         const dx = cx + C2 / 2 - m2x, dy = cy + C2 / 2 - m2y;
         const d = Math.sqrt(dx * dx + dy * dy);
         if (d < 150) cc[i] = Math.max(cc[i], 1 - d / 150);
@@ -767,6 +780,7 @@ img{max-width:100%;display:block}
     }
     x2.globalAlpha = 1;
   }
+  let contactSeen = false;
   function startContact() {
     if (running2) return;
     running2 = true;
@@ -776,9 +790,21 @@ img{max-width:100%;display:block}
   function stopContact() { running2 = false; cancelAnimationFrame(rafId2); }
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (es) {
-      if (es[es.length - 1].isIntersecting) startContact(); else stopContact();
+      contactSeen = es[es.length - 1].isIntersecting;
+      if (contactSeen && !document.hidden) startContact(); else stopContact();
     }, { threshold: 0 }).observe(c2.parentElement);
   } else startContact();
+
+  // IntersectionObserver never fires on tab switches — rAF just stops mid-phase.
+  // Pause both fields explicitly when hidden and resume through startHero /
+  // startContact, which also rights the hero's cycle after the absence.
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { stopHero(); stopContact(); }
+    else {
+      if (heroSeen) startHero();
+      if (contactSeen) startContact();
+    }
+  });
 
   // --- scroll progress rail ---
   const railCells = document.querySelectorAll('#rail span');
